@@ -75,11 +75,11 @@ body {
   border-color: transparent;
 }
 
-#main-login #contain .login-register-wrapper form {
-
+#main-login #contain .login-register-wrapper form .content-checkbox {
+  margin-top: 10px;
 }
 
-#main-login #contain .login-register-wrapper form input {
+#main-login #contain .login-register-wrapper form .input-group > input {
   position: relative;
   display: flex;
   flex-direction: row;
@@ -93,12 +93,12 @@ body {
   background: #fafafa;
 }
 
-#main-login #contain .login-register-wrapper form input:focus {
+#main-login #contain .login-register-wrapper form .input-group > input:focus {
   background: #b9b8b854 !important;
   border-color: #1094ab;
 }
 
-#main-login #contain .login-register-wrapper form input > label {
+#main-login #contain .login-register-wrapper form .input-group > input > label {
   margin: 0 auto;
 }
 

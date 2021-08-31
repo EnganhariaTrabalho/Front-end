@@ -3,6 +3,7 @@ import { useHistory } from 'react-router';
 // Import de libs de react.
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
+import bootstrap from 'bootstrap/dist/js/bootstrap.min.js';
 import { Link } from "react-router-dom";
 
 // Import de CSS.
@@ -15,23 +16,36 @@ import api from "../../api";
 import { login, loginError } from "../../auth";
 
 const LoginComponent = (props) => {
-  const [email, setEmail] = useState(false);
-  const [password, setPassword] = useState(false);
+  const [informacoes, setInformacoes] = useState({});
   const [erro, setErro] = useState(false);
   const [loginStatus, setLoginStatus] = useState(false);
+  const [count, setCount] = useState(6);
 
   let history = useHistory();
 
-  async function auth(email, password) {
+  const getCountTimeout = () => {
+    setTimeout(() => {
+      setCount(count - 1);
+    }, 2000);
+  };
+
+  async function auth(email, password, nivel) {
     try {
       await api.post("/session", {
         email: email,
         senha: password,
+        nivel: nivel
       }).then((response) => {
-        setLoginStatus(true)
+        setLoginStatus(true);
+        setTimeout(() => {
+          if (nivel === "aluno") {
+            history.push("/dashboard");
+          } else {
+            history.push("/adm/dashboard");
+          }
+        }, 4000);
       })
       //login(response.data.token);
-      history.push("/dashboard");
     } catch (error) {
       console.log(error);
       setLoginStatus(false);
@@ -44,7 +58,7 @@ const LoginComponent = (props) => {
         setErro("Não foi encontrado nos sistemas!");
       } else if (error.response.status === 401) {
         setLoginStatus(false);
-        setErro("Conexão não autenticada pelo navegador, verifique se é HTTPS");
+        setErro("Requisição HTTPS não aceita.");
       } else if (error.response.status === 405) {
         setLoginStatus(false);
         setErro("Método não permitido...");
@@ -69,37 +83,60 @@ const LoginComponent = (props) => {
     }
   }
 
-  function HandleChangeEmail(event) {
-    setEmail(event.target.value)
-  };
-
-  function HandleChangePassword(event) {
-    setPassword(event.target.value)
+  const setInformacoesForm = (event) => {
+    event.persist();
+    setInformacoes(informacoes => ({
+      ...informacoes,
+      [event.target.name]: event.target.value,
+    }));
   };
 
   function HandleSubmit(event) {
     event.preventDefault();
-    auth(email, password);
+    auth(informacoes.email, informacoes.password, informacoes.nivel);
   };
 
   return (
     <form action="" id="loginForm" className={`${(props.showLogin === false) ? "nodisplay" : "showdisplay animadoDireitaParaEsquerda"}`} onSubmit={HandleSubmit}>
       <h3 className="text-center noselect">Login</h3>
       <div className="input-group form-floating">
-        <input type="email" className="form-control" id="floatingInput" placeholder="Email" aria-label="Email" onChange={HandleChangeEmail} />
+        <input type="email" className="form-control" name="email" id="floatingInput" placeholder="Email" aria-label="Email" onChange={setInformacoesForm} />
         <label className="noselect" htmlFor="floatingInput">Email</label>
       </div>
       <div className="input-group form-floating text-center">
-        <input type="password" className="form-control" id="floatingInput" placeholder="Senha" aria-label="Senha" onChange={HandleChangePassword} />
+        <input type="password" className="form-control" name="password" id="floatingInput" placeholder="Senha" aria-label="Senha" onChange={setInformacoesForm} />
         <label className="noselect" htmlFor="floatingInput">Senha</label>
       </div>
       <div className="btn-group">
-        <button className="btn" id="btnSubmit" type="submit">Login</button>
+        <button className="btn" id="btnSubmit" type="submit" onClick={getCountTimeout()}>Login</button>
+      </div>
+      <div className="content-checkbox noselect">
+        <label className="noselect">Qual o tipo do seu curso ?</label>
+        <ul className="list-group-check-box">
+          <li className="form-check">
+            <input className="form-check-input" type="radio" name="nivel" id="cRadios1" value="professor" onChange={setInformacoesForm} />
+            <label className="form-check-label" htmlFor="cRadios1">
+              Professor
+            </label>
+          </li>
+          <li className="form-check">
+            <input className="form-check-input" type="radio" name="nivel" id="cRadios2" value="aluno" onChange={setInformacoesForm} />
+            <label className="form-check-label" htmlFor="cRadios2">
+              Aluno
+            </label>
+          </li>
+          <li className="form-check">
+            <input className="form-check-input" type="radio" name="nivel" id="cRadios2" value="coordenador" onChange={setInformacoesForm} />
+            <label className="form-check-label" htmlFor="cRadios2">
+              Coordenadoria
+            </label>
+          </li>
+        </ul>
       </div>
       <div id="text-forgot-panel">
-        <p>
+        <p className="text-center">
           {loginStatus === true
-            ? `Logado com sucesso`
+            ? `Logado, redirecionando em ` + count
             : loginStatus === false
               ? erro
               : ``}

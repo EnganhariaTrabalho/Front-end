@@ -13,55 +13,47 @@ import '../../misc/animations.css';
 import '../../misc/misc.css';
 
 const CadComponent = (props) => {
-  const [nome, setNome] = useState('');
-  const [nome_usuario, setUsuario] = useState('');
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
   const [confirmeSenha, setConfirmeSenha] = useState('');
-  const [numero_usp, setNUSP] = useState('');
+  const [informacoes, setInformacoes] = useState({});
 
-  async function HandleSubmit() {
+  async function HandleSubmit(event) {
+    event.preventDefault();
     try {
-      let myModal = undefined;
-      if (senha === confirmeSenha) {
+
+      let numero_usp = informacoes.numero_usp;
+      let nome = informacoes.nome;
+      let email = informacoes.email;
+      let senha = informacoes.senha;
+      let nome_usuario = informacoes.nome_usuario;
+      let numero_usp_professor = informacoes.numero_usp_prof;
+      let lattes = informacoes.link_lattes;
+      let curso = informacoes.curso;
+
+      if (informacoes.senha === confirmeSenha) {
         await api
-          .post("/users", { nome_usuario, email, senha, nome, numero_usp, tipo_usuario: 1 })
+          .post("/aluno", {nome_usuario, email, senha, nome, numero_usp, numero_usp_professor, lattes, curso})
           .then(response => {
-            console.log(response);
-            myModal = new bootstrap.Modal(document.getElementById('cadastrado'), {
-              keyboard: false
-            })            
+            alert("Usuário criado!");
           });
       } else {
         alert("Suas senhas não batem!!!!");
       }
     } catch (error) {
+      
       console.log(error.res);
     }
   }
 
-  function HandleNome(e) {
-    setNome(e.target.value);
-  }
-
-  function HandleUsuario(e) {
-    setUsuario(e.target.value);
-  }
-
-  function HandleEmail(e) {
-    setEmail(e.target.value);
-  }
-
-  function HandleSenha(e) {
-    setSenha(e.target.value);
-  }
+  const setInformacoesForm = (event) => {
+    event.persist();
+    setInformacoes(informacoes => ({
+      ...informacoes,
+      [event.target.name]: event.target.value,
+    }));
+  };
 
   function HandleConfirmeSenha(e) {
     setConfirmeSenha(e.target.value);
-  }
-
-  function HandleNUSP(e) {
-    setNUSP(e.target.value);
   }
 
   return (
@@ -69,50 +61,58 @@ const CadComponent = (props) => {
       <form action="" id="registerForm" className={`${(props.showCad === false) ? "nodisplay" : "showdisplay animadoDireitaParaEsquerda"}`} onSubmit={HandleSubmit}>
         <h3 className="text-center noselect">Cadastro</h3>
         <div className="input-group form-floating">
-          <input type="text" className="form-control" id="floatingInput" placeholder="Usuário" aria-label="Usuário" onChange={HandleUsuario} />
+          <input type="text" className="form-control" name="nome_usuario" id="floatingInput" placeholder="Usuário" aria-label="Usuário" onChange={setInformacoesForm} />
           <label className="noselect" htmlFor="floatingInput">Usuário</label>
         </div>
         <div className="input-group form-floating">
-          <input type="text" className="form-control" id="floatingInput" placeholder="Número USP" aria-label="Número USP" onChange={HandleNUSP} />
+          <input type="text" className="form-control" name="numero_usp" id="floatingInput" placeholder="Número USP" aria-label="Número USP" onChange={setInformacoesForm} />
           <label className="noselect" htmlFor="floatingInput">Número USP</label>
         </div>
         <div className="input-group form-floating">
-          <input type="email" className="form-control" id="floatingInput" placeholder="Email" aria-label="Email" onChange={HandleEmail} />
+          <input type="email" className="form-control" name="email" id="floatingInput" placeholder="Email" aria-label="Email" onChange={setInformacoesForm} />
           <label className="noselect" htmlFor="floatingInput">Email</label>
         </div>
         <div className="input-group form-floating">
-          <input type="password" className="form-control" id="floatingInput" placeholder="Senha" aria-label="Senha" onChange={HandleSenha} />
+          <input type="password" className="form-control" name="senha" id="floatingInput" placeholder="Senha" aria-label="Senha" onChange={setInformacoesForm} />
           <label className="noselect" htmlFor="floatingInput">Senha</label>
         </div>
         <div className="input-group form-floating">
-          <input type="password" className="form-control" id="floatingInput" placeholder="Confirme a senha" aria-label="Senha" onChange={HandleConfirmeSenha} />
+          <input type="password" className="form-control" name="confirme_senha" id="floatingInput" placeholder="Confirme a senha" aria-label="Senha" onChange={HandleConfirmeSenha} />
           <label className="noselect" htmlFor="floatingInput">Confirme a senha</label>
         </div>
         <div className="input-group form-floating">
-          <input type="text" className="form-control" id="floatingInput" placeholder="Nome" aria-label="Nome" onChange={HandleNome} />
+          <input type="text" className="form-control" name="nome" id="floatingInput" placeholder="Nome" aria-label="Nome" onChange={setInformacoesForm} />
           <label className="noselect" htmlFor="floatingInput">Nome completo</label>
+        </div>
+        <div className="input-group form-floating">
+          <input type="text" className="form-control" name="numero_usp_prof" id="floatingInput" placeholder="Número Usp Professor" aria-label="Número Usp Professor" onChange={setInformacoesForm} />
+          <label className="noselect" htmlFor="floatingInput">Número USP do professor</label>
+        </div>
+        <div className="input-group form-floating">
+          <input type="text" className="form-control" name="link_lattes" id="floatingInput" placeholder="Nome" aria-label="Nome" onChange={setInformacoesForm} />
+          <label className="noselect" htmlFor="floatingInput">Link Lattes</label>
+        </div>
+        <div className="content-checkbox noselect">
+          <label className="noselect">Qual o tipo do seu curso ?</label>
+          <ul className="list-group-check-box">
+            <li className="form-check">
+              <input className="form-check-input" type="radio" name="curso" id="cRadios1" value="doutorado" onChange={setInformacoesForm} />
+              <label className="form-check-label" htmlFor="cRadios1">
+                Doutorado
+              </label>
+            </li>
+            <li className="form-check">
+              <input className="form-check-input" type="radio" name="curso" id="cRadios2" value="mestrado" onChange={setInformacoesForm} />
+              <label className="form-check-label" htmlFor="cRadios2">
+                Mestrado
+              </label>
+            </li>
+          </ul>
         </div>
         <div className="btn-group">
           <button type="submit" className="btn" id="btnSubmit">Registrar-se</button>
         </div>
       </form>
-      <div className="modal fade" id="cadastro" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="staticBackdropLabel">Modal title</h5>
-              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div className="modal-body">
-              ...
-            </div>
-            <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" className="btn btn-primary">Understood</button>
-            </div>
-          </div>
-        </div>
-      </div>
     </>
   );
 }

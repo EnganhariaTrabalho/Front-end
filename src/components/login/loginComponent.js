@@ -35,17 +35,12 @@ const LoginComponent = (props) => {
         email: email,
         senha: password,
         nivel: nivel
-      }).then((response) => {
+      }, {timeout: 4000}).then((response) => {
         setLoginStatus(true);
-        setTimeout(() => {
-          if (nivel === "aluno") {
-            history.push("/dashboard");
-          } else {
-            history.push("/adm/dashboard");
-          }
-        }, 4000);
+        if(response.status === 200) {
+          nivel === "aluno" ? history.push("/dashboard") : history.push("/adm/dashboard");
+        }
       })
-      //login(response.data.token);
     } catch (error) {
       console.log(error);
       setLoginStatus(false);

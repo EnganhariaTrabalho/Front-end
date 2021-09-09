@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect, } from 'react';
+import React, { Component } from 'react';
 
 // Import de libs de react.
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -8,10 +8,6 @@ import 'bootstrap/dist/js/bootstrap.min.js';
 import LoginComponent from '../../components/login/loginComponent';
 import CadComponent from '../../components/cad/cadComponent';
 import ForgotPsdComponent from '../../components/forgotPassword/forgotPassword';
-
-// Import de API..
-import api from "../../api";
-import { login, loginError } from "../../auth";
 
 // Import de CSS.
 import '../../components/login/login.css';

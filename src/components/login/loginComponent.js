@@ -36,8 +36,10 @@ const LoginComponent = (props) => {
         senha: password,
         nivel: nivel
       }, {timeout: 4000}).then((response) => {
+        console.log(response.status, response.statusText);
         setLoginStatus(true);
         if(response.status === 200) {
+          login(response.data.token);
           nivel === "aluno" ? history.push("/dashboard") : history.push("/adm/dashboard");
         }
       })

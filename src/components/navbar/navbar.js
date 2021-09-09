@@ -12,6 +12,14 @@ import './navbar.css';
 import '../../misc/animations.css';
 import '../../misc/misc.css';
 
+// Import de API..
+import api from "../../api";
+import { logout } from "../../auth";
+
+const handleLogout = () => {
+  logout();
+}
+
 const Navbar = (props) => {
     if(props.isOnFormsPage === true && props.isCoord === false){
       return (
@@ -49,7 +57,7 @@ const Navbar = (props) => {
           </div>
           <ul className="navbar-nav">
             <li className="nav-item">
-              <Link type="button" className="nav-link" to={{pathname: "/login"}} replace>Logout</Link>
+              <Link type="button" className="nav-link" to={{pathname: "/login"}} replace onClick={handleLogout}>Logout</Link>
             </li>
           </ul>
         </nav>

@@ -25,7 +25,6 @@ const EditForm = (props) => {
     event.preventDefault();
     // Objeto a ser enviado
     let form = {
-      id_coordenador: informacoes.nomeCoordenador,
       tipo_curso: informacoes.tipoCurso,
       semestre: informacoes.semestre,
       aprovacao_grad: informacoes.aprovacaoGrad,
@@ -45,20 +44,44 @@ const EditForm = (props) => {
       participou_congresso_exterior: informacoes.partiCongressoExterior,
       participou_pesquisa_exterior: informacoes.partiPesquisaExterior,
       algo_declarar: informacoes.algoDeclarar,
+      ultima_atualizacao_do_lattes: informacoes.ultimaAtualizacaoDolattes,
+      resultado_ultima_avaliacao: informacoes.resultadoUltimaAvaliacao,
       id_aluno: idAluno
     }
-
+    console.log(form);
     try {
       await api
-        .post(`/formulario/${form.id_aluno}`, form)
+        .post(`/formularios`, {
+            semestre_curso: form.semestre,
+            ultima_atualizacao_do_lattes: form.ultima_atualizacao_do_lattes,
+            resultado_ultima_avaliacao: form.resultado_ultima_avaliacao,
+            aprovacao_obrigatorias: form.aprovacao_grad,
+            aprovacao_optativas: form.aprovacao_opt,
+            conceitos: form.conceitos,
+            disciplinas_repovadas_curso: form.reprova_total,
+            disciplinas_repovadas_semestre: form.reprova_ultimo_semestre,
+            exame_proeficiencia: form.aprova_proef,
+            exame_de_qualificacao: form.exame_quali,
+            limite_max_qualificacao: form.limite_quali,
+            tempo_limite_deposito: form.limite_tese,
+            artigos_publicados: form.artigos_aceito,
+            artigos_espera: form.artigos_aguardando,
+            artigo_preparacao: form.estagio_artigo_submissao,
+            estagio_atual_pesquisa: form.estagio_pesquisa,
+            congresso: form.participou_congresso_nacional,
+            congresso_exterior: form.participou_congresso_exterior,
+            pesquisa_exterior: form.participou_pesquisa_exterior,
+            declaracao: form.algo_declarar
+          }
+        )
         .then((response) => {
+          console.log(response.status, response.statusText);
           alert("Formulário enviado!!!");
         })
-      //login(response.data.token);
+
       props.history.push("/dashboard");
-    } catch (e) {
-      console.log(e);
-      console.log(e.res.status(400).json({ msg: e }));
+    } catch (error) {
+      console.log(error.response.status, error.response.statusText);
     }
   }
 
@@ -70,7 +93,7 @@ const EditForm = (props) => {
     }));
   };
 
-    // Métodos declarados
+  // Métodos declarados
   function findCoordenador() {
     //TODO
     return undefined;
@@ -98,25 +121,40 @@ const EditForm = (props) => {
           <h1 className="text-center noselect">Formulário a ser enviado.</h1>
           <form className="form container" onSubmit={HandleSubmit}>
             <h2 className="noselect">Dados gerais<hr className="my-2"></hr></h2>
+            <h4 className="noselect">Ultima atualização do perfil lattes.</h4>
             <div className="form-wrapper">
+              <label>Em quantas disciplinas obrigatórias você já obteve aprovação ?</label>
               <div className="input-group form-floating">
-                <input type="name" className="defaultInput form-control" name="nomeCoordenador" id="floatingInput" placeholder="Nome do Coordenador" aria-label="Nome do Coordenador" onChange={setInformacoesForm} />
-                <label className="noselect" htmlFor="floatingInput">Nome do coordenador</label>
+                <input type="name" className="defaultInput form-control" name="ultimaAtualizacaoDolattes" id="floatingInput" placeholder="Insira uma data válida" aria-label="ultima Atualização Do lattes, ultima Atualização Do lattes" onChange={setInformacoesForm} />
+                <label className="noselect" htmlFor="floatingInput">Resposta</label>
               </div>
             </div>
+            <h4 className="noselect">Qual foi o resultado da avaliação do seu último relatório?</h4>
             <div className="content-checkbox noselect">
-              <label className="noselect">Qual o tipo do seu curso ?</label>
+              <label className="noselect">Marcar apenas 1 oval:</label>
               <ul className="list-group list-group-check-box">
                 <li className="form-check">
-                  <input className="form-check-input" type="radio" name="tipoCurso" id="cRadios1" value="doutorado" onChange={setInformacoesForm} />
-                  <label className="form-check-label" htmlFor="cRadios1">
-                    Doutorado
+                  <input className="form-check-input" type="radio" name="resultadoUltimaAvaliacao" id="apRadios1" value="aprovado" onChange={setInformacoesForm} />
+                  <label className="form-check-label" htmlFor="apRadios1">
+                    Aprovado.
                   </label>
                 </li>
                 <li className="form-check">
-                  <input className="form-check-input" type="radio" name="tipoCurso" id="cRadios2" value="mestrado" onChange={setInformacoesForm} />
-                  <label className="form-check-label" htmlFor="cRadios2">
-                    Mestrado
+                  <input className="form-check-input" type="radio" name="resultadoUltimaAvaliacao" id="apRadios2" value="aprovado-ressalvas" onChange={setInformacoesForm} />
+                  <label className="form-check-label" htmlFor="apRadios2">
+                    Aprovado com ressalvas.
+                  </label>
+                </li>
+                <li className="form-check">
+                  <input className="form-check-input" type="radio" name="resultadoUltimaAvaliacao" id="apRadios3" value="insatisfatorio" onChange={setInformacoesForm} />
+                  <label className="form-check-label" htmlFor="apRadios3">
+                    Insatisfatório.
+                  </label>
+                </li>
+                <li className="form-check">
+                  <input className="form-check-input" type="radio" name="resultadoUltimaAvaliacao" id="apRadios4" value="primeiro-relatorio" onChange={setInformacoesForm} />
+                  <label className="form-check-label" htmlFor="apRadios4">
+                    Não se aplica(é meu primeiro relatório).
                   </label>
                 </li>
               </ul>
@@ -126,31 +164,31 @@ const EditForm = (props) => {
               <label className="noselect">(Ignorar se for do mestrado) Semestre atual:</label>
               <ul className="list-group list-group-check-box">
                 <li className="form-check">
-                  <input className="form-check-input" type="radio" name="semestre" id="bRadios1" value="semestre-1" onChange={setInformacoesForm} />
+                  <input className="form-check-input" type="radio" name="semestre" id="bRadios1" value="1" onChange={setInformacoesForm} />
                   <label className="form-check-label" htmlFor="bRadios1">
                     1° semestre
                   </label>
                 </li>
                 <li className="form-check">
-                  <input className="form-check-input" type="radio" name="semestre" id="bRadios2" value="semestre-2" onChange={setInformacoesForm} />
+                  <input className="form-check-input" type="radio" name="semestre" id="bRadios2" value="2" onChange={setInformacoesForm} />
                   <label className="form-check-label" htmlFor="bRadios2">
                     2° semestre
                   </label>
                 </li>
                 <li className="form-check">
-                  <input className="form-check-input" type="radio" name="semestre" id="bRadios3" value="semestre-3" onChange={setInformacoesForm} />
+                  <input className="form-check-input" type="radio" name="semestre" id="bRadios3" value="3" onChange={setInformacoesForm} />
                   <label className="form-check-label" htmlFor="bRadios3">
                     3° semestre
                   </label>
                 </li>
                 <li className="form-check">
-                  <input className="form-check-input" type="radio" name="semestre" id="bRadios4" value="semestre-4" onChange={setInformacoesForm} />
+                  <input className="form-check-input" type="radio" name="semestre" id="bRadios4" value="4" onChange={setInformacoesForm} />
                   <label className="form-check-label" htmlFor="bRadios4">
                     4° semestre
                   </label>
                 </li>
                 <li className="form-check">
-                  <input className="form-check-input" type="radio" name="semestre" id="bRadios5" value="semestre-5" onChange={setInformacoesForm} />
+                  <input className="form-check-input" type="radio" name="semestre" id="bRadios5" value="5" onChange={setInformacoesForm} />
                   <label className="form-check-label" htmlFor="bRadios5">
                     5° semestre
                   </label>
@@ -162,49 +200,49 @@ const EditForm = (props) => {
               <label className="noselect">(Apenas para quem é do mestrado) Semestre atual:</label>
               <ul className="list-group list-group-check-box">
                 <li className="form-check">
-                  <input className="form-check-input" type="radio" name="semestre" id="mRadios1" value="semestre-1" onChange={setInformacoesForm} />
+                  <input className="form-check-input" type="radio" name="semestre" id="mRadios1" value="1" onChange={setInformacoesForm} />
                   <label className="form-check-label" htmlFor="mRadios1">
                     1° semestre
                   </label>
                 </li>
                 <li className="form-check">
-                  <input className="form-check-input" type="radio" name="semestre" id="mRadios2" value="semestre-2" onChange={setInformacoesForm} />
+                  <input className="form-check-input" type="radio" name="semestre" id="mRadios2" value="2" onChange={setInformacoesForm} />
                   <label className="form-check-label" htmlFor="mRadios2">
                     2° semestre
                   </label>
                 </li>
                 <li className="form-check">
-                  <input className="form-check-input" type="radio" name="semestre" id="mRadios3" value="semestre-3" onChange={setInformacoesForm} />
+                  <input className="form-check-input" type="radio" name="semestre" id="mRadios3" value="3" onChange={setInformacoesForm} />
                   <label className="form-check-label" htmlFor="mRadios3">
                     3° semestre
                   </label>
                 </li>
                 <li className="form-check">
-                  <input className="form-check-input" type="radio" name="semestre" id="mRadios4" value="semestre-4" onChange={setInformacoesForm} />
+                  <input className="form-check-input" type="radio" name="semestre" id="mRadios4" value="4" onChange={setInformacoesForm} />
                   <label className="form-check-label" htmlFor="mRadios4">
                     4° semestre
                   </label>
                 </li>
                 <li className="form-check">
-                  <input className="form-check-input" type="radio" name="semestre" id="mRadios5" value="semestre-5" onChange={setInformacoesForm} />
+                  <input className="form-check-input" type="radio" name="semestre" id="mRadios5" value="5" onChange={setInformacoesForm} />
                   <label className="form-check-label" htmlFor="mRadios5">
                     5° semestre
                   </label>
                 </li>
                 <li className="form-check">
-                  <input className="form-check-input" type="radio" name="semestre" id="mRadios6" value="semestre-6" onChange={setInformacoesForm} />
+                  <input className="form-check-input" type="radio" name="semestre" id="mRadios6" value="6" onChange={setInformacoesForm} />
                   <label className="form-check-label" htmlFor="mRadios6">
                     6° semestre
                   </label>
                 </li>
                 <li className="form-check">
-                  <input className="form-check-input" type="radio" name="semestre" id="mRadios7" value="semestre-7" onChange={setInformacoesForm} />
+                  <input className="form-check-input" type="radio" name="semestre" id="mRadios7" value="7" onChange={setInformacoesForm} />
                   <label className="form-check-label" htmlFor="mRadios7">
                     7° semestre
                   </label>
                 </li>
                 <li className="form-check">
-                  <input className="form-check-input" type="radio" name="semestre" id="mRadios8" value="semestre-8" onChange={setInformacoesForm} />
+                  <input className="form-check-input" type="radio" name="semestre" id="mRadios8" value="8" onChange={setInformacoesForm} />
                   <label className="form-check-label" htmlFor="mRadios8">
                     8° semestre
                   </label>
@@ -348,19 +386,19 @@ const EditForm = (props) => {
               <label className="noselect">Se não qualificou, quanto tempo falta para o limite máximo de qualificação?</label>
               <ul className="list-group list-group-check-box">
                 <li className="form-check">
-                  <input className="form-check-input" type="radio" name="limiteQuali" id="repQualificarTempo1" value="menor-3-meses" onChange={setInformacoesForm} />
+                  <input className="form-check-input" type="radio" name="limiteQuali" id="repQualificarTempo1" value="3" onChange={setInformacoesForm} />
                   <label className="form-check-label" htmlFor="repQualificarTempo1">
                     Menos de 3 meses.
                   </label>
                 </li>
                 <li className="form-check">
-                  <input className="form-check-input" type="radio" name="limiteQuali" id="repQualificarTempo2" value="entre-3-6-meses" onChange={setInformacoesForm} />
+                  <input className="form-check-input" type="radio" name="limiteQuali" id="repQualificarTempo2" value="6" onChange={setInformacoesForm} />
                   <label className="form-check-label" htmlFor="repQualificarTempo2">
                     Entre 3 a 6 meses.
                   </label>
                 </li>
                 <li className="form-check">
-                  <input className="form-check-input" type="radio" name="limiteQuali" id="repQualificarTempo3" value="mais-de-6-meses" onChange={setInformacoesForm} />
+                  <input className="form-check-input" type="radio" name="limiteQuali" id="repQualificarTempo3" value="7" onChange={setInformacoesForm} />
                   <label className="form-check-label" htmlFor="repQualificarTempo3">
                     Mais de 6 meses.
                   </label>
@@ -374,19 +412,19 @@ const EditForm = (props) => {
               </label>
               <ul className="list-group list-group-check-box">
                 <li className="form-check">
-                  <input className="form-check-input" type="radio" name="limiteTese" id="aprQualificarTempo1" value="menor-3-meses" onChange={setInformacoesForm} />
+                  <input className="form-check-input" type="radio" name="limiteTese" id="aprQualificarTempo1" value="3" onChange={setInformacoesForm} />
                   <label className="form-check-label" htmlFor="aprQualificarTempo1">
                     Menos de 3 meses.
                   </label>
                 </li>
                 <li className="form-check">
-                  <input className="form-check-input" type="radio" name="limiteTese" id="aprQualificarTempo2" value="entre-3-6-meses" onChange={setInformacoesForm} />
+                  <input className="form-check-input" type="radio" name="limiteTese" id="aprQualificarTempo2" value="6" onChange={setInformacoesForm} />
                   <label className="form-check-label" htmlFor="aprQualificarTempo2">
                     Entre 3 a 6 meses.
                   </label>
                 </li>
                 <li className="form-check">
-                  <input className="form-check-input" type="radio" name="limiteTese" id="aprQualificarTempo3" value="mais-de-6-meses" onChange={setInformacoesForm} />
+                  <input className="form-check-input" type="radio" name="limiteTese" id="aprQualificarTempo3" value="7" onChange={setInformacoesForm} />
                   <label className="form-check-label" htmlFor="aprQualificarTempo3">
                     Mais de 6 meses.
                   </label>
@@ -412,7 +450,7 @@ const EditForm = (props) => {
                   </label>
                 </li>
                 <li className="form-check">
-                  <input className="form-check-input" type="radio" name="artigoAceito" id="lattesRadios3" value="mais-de-2" onChange={setInformacoesForm} />
+                  <input className="form-check-input" type="radio" name="artigoAceito" id="lattesRadios3" value="2" onChange={setInformacoesForm} />
                   <label className="form-check-label" htmlFor="lattesRadios3">
                     Mais de 2.
                   </label>
@@ -436,7 +474,7 @@ const EditForm = (props) => {
                   </label>
                 </li>
                 <li className="form-check">
-                  <input className="form-check-input" type="radio" name="artigoAguardando" id="aguardoLattesRadios3" value="mais-de-2" onChange={setInformacoesForm} />
+                  <input className="form-check-input" type="radio" name="artigoAguardando" id="aguardoLattesRadios3" value="2" onChange={setInformacoesForm} />
                   <label className="form-check-label" htmlFor="aguardoLattesRadios3">
                     Mais de 2.
                   </label>

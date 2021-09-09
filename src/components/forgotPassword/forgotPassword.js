@@ -38,7 +38,7 @@ const ForgotPsdComponent = (props) => {
         <label className="noselect" htmlFor="floatingInput">Digite seu email</label>
       </div>
       <div className="btn-group">
-        <button className="btnSubmit" onClick={console.log("Fazer a API de cadastro depois!")} id="btnSubmit" type="submit" >Enviar Email</button>
+        <button className="btnSubmit" id="btnSubmit" type="submit" >Enviar Email</button>
       </div>
     </form>
   );

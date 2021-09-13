@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 
 // Import dos componentes.
 import Login from "./pages/login/login";
@@ -8,6 +8,24 @@ import Form from "./pages/form/form";
 import EditForm from "./pages/form/editForm";
 import AdminDashboard from "./pages/admin/dash";
 import EditFormAdm from "./pages/admin/admForm";
+
+// Import de API.
+import { isAuthenticated } from './auth';
+
+const PrivateRoute = ({ component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={(props) =>
+      isAuthenticated() ? (
+        <Component {...props} />
+      ) : (
+        <Redirect
+          to={{ pathname: "/login", state: { from: props.location } }}
+        />
+      )
+    }
+  />
+);
 
 export default class Routes extends React.Component {
   constructor(props) {
@@ -31,12 +49,12 @@ export default class Routes extends React.Component {
           <Switch>
             <Route exact path="/login" component={Login} />
             <Route exact path="/" component={Login} />
-            <Route exact path="/dashboard" component={Dashboard} />
-            <Route exact path="/form" component={Form} />
-            <Route exact path="/edit/:id" component={EditForm} />
-            <Route exact path="/adm/dashboard" component={AdminDashboard} />
-            <Route exact path="/adm/edit/:id" component={EditFormAdm} />
-            <Route path="*" component={() => <h1>Page not Found</h1>} />
+            <PrivateRoute exact path="/dashboard" component={Dashboard} />
+            <PrivateRoute exact path="/form" component={Form} />
+            <PrivateRoute exact path="/edit/:id" component={EditForm} />
+            <PrivateRoute exact path="/adm/dashboard" component={AdminDashboard} />
+            <PrivateRoute exact path="/adm/edit/:id" component={EditFormAdm} />
+            <PrivateRoute path="*" component={() => <h1>Page not Found</h1>} />
           </Switch>
         </BrowserRouter>
       </>

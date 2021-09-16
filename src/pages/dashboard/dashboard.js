@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect, } from 'react';
+import React, { useState, useEffect, } from 'react';
 
 // Import de libs de react.
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -9,6 +9,9 @@ import { Link } from "react-router-dom";
 import Navbar from '../../components/navbar/navbar';
 import Profile from '../../components/profile/profile';
 import Status from '../../components/status/status';
+
+// Import de API.
+import api from '../../api';
 
 // Import de CSS.
 import './dashboard.css';
@@ -60,6 +63,20 @@ const vetor_vetor_pessoas = [
 ]
 
 const Dashboard = (props) => {
+  const [formData, setFormData] = useState([]);
+
+  useEffect(() => {
+    getForms();
+  }, []);
+
+  async function getForms() {
+    let result;
+    await api.get(`/formularios/aluno`).then((response) => {
+      result = response.data;
+    });
+    setFormData(result);
+    return result;
+  }
 
   return (
     <>
@@ -85,26 +102,23 @@ const Dashboard = (props) => {
                 <div className="tab-pane fade" id="list-editar-form" role="tabpanel" aria-labelledby="list-profile-list">
                   <div className="container">
                     { // Primeiro vetor pega um vetor de relatórios e passa em cada uma row
-                      vetor_vetor_pessoas.map((element, index) => {
+                      formData === undefined ? "" : formData.map((element, index) => {
                         return (
                           <div className="row" key={index}>
                             { // Parse do vetor que contém as colunas.
-                              element.map((e, index) => {
-                                return (
-                                  <div className="col" key={index}>
-                                    <Status
-                                      id={e.idRelatorio}
-                                      nomeRelatorio={e.nomeRelatorio}
-                                      descricaoRelatorio={e.descricaoRelatorio}
-                                      comentarioCoord={e.comentarioCoord}
-                                      statusDado={e.statusDado}
-                                      relStatus={e.statusDado}
-                                      data={e.data}
-                                      form={e.formulario}
-                                      typeEdit={true}
-                                    />
-                                  </div>);
-                              })
+                              <div className="col" key={index}>
+                              <Status
+                                id={ element.cod_formulario}
+                                nomeRelatorio={"Relatório " + element.cod_formulario}
+                                descricaoRelatorio={ element.declaracao}
+                                comentarioCoord={ element.comentario_orientador}
+                                statusDado={ element.statusDado}
+                                relStatus={ element.statusDado}
+                                data={ element.data}
+                                form={ element.formulario}
+                                typeEdit={true}
+                              />
+                            </div>
                             }
                           </div>
                         );
@@ -115,25 +129,23 @@ const Dashboard = (props) => {
                 <div className="tab-pane fade" id="list-status-form" role="tabpanel" aria-labelledby="list-messages-list">
                   <div className="container">
                     { // Primeiro vetor pega um vetor de relatórios e passa em cada uma row
-                      vetor_vetor_pessoas.map((element, index) => {
+                      formData === undefined ? "" : formData.map((element, index) => {
                         return (
                           <div className="row" key={index}>
                             { // Parse do vetor que contém as colunas.
-                              element.map((e, index) => {
-                                return (
-                                  <div className="col" key={index}>
-                                    <Status
-                                      id={e.idRelatorio}
-                                      nomeRelatorio={e.nomeRelatorio}
-                                      descricaoRelatorio={e.descricaoRelatorio}
-                                      comentarioCoord={e.comentarioCoord}
-                                      statusDado={e.statusDado}
-                                      relStatus={e.statusDado}
-                                      data={e.data}
-                                      form={e.formulario}
-                                    />
-                                  </div>);
-                              })
+                              <div className="col" key={index}>
+                              <Status
+                                id={ element.cod_formulario}
+                                nomeRelatorio={"Relatório " + element.cod_formulario}
+                                descricaoRelatorio={ element.declaracao}
+                                comentarioCoord={ element.comentario_orientador}
+                                statusDado={ element.statusDado}
+                                relStatus={ element.statusDado}
+                                data={ element.data}
+                                form={ element.formulario}
+                                typeEdit={true}
+                              />
+                            </div>
                             }
                           </div>
                         );
@@ -142,7 +154,7 @@ const Dashboard = (props) => {
                   </div>
                 </div>
                 <div className="tab-pane fade" id="list-perfil" role="tabpanel" aria-labelledby="list-settings-list">
-                  <Profile tipo={props.perfilType}/>
+                  <Profile tipo={props.perfilType} />
                 </div>
               </div>
             </div>

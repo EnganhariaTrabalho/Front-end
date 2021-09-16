@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect, } from 'react';
+import React, { useState, useEffect, } from 'react';
 
 // Import de libs de react.
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -9,6 +9,7 @@ import Navbar from '../../components/navbar/navbar';
 
 // Import de API..
 import api from "../../api";
+import { getId } from "../../id";
 
 // Import de CSS.
 import './form.css';
@@ -16,10 +17,13 @@ import '../../misc/animations.css';
 import '../../misc/misc.css';
 
 const EditForm = (props) => {
-  const id = props.location.params;
+  const id = getId();
+  console.log(id);
   // Variáveis do formulário.
+  
   const [informacoes, setInformacoes] = useState({});
   const [idAluno, setIdAluno] = useState(false);
+  const [editForm, setForm] = useState({});
 
   async function HandleSubmit(event) {
     event.preventDefault();
@@ -99,9 +103,31 @@ const EditForm = (props) => {
     return undefined;
   }
 
-  function findForm(id) {
-    // TODO 
-    // GET(id);
+  useEffect(() => {
+    findForm();
+  }, []);
+
+  async function findForm() {
+    let data;
+    let result;
+
+    await api.get(`/formularios/aluno`).then(response => {
+      data = response.data;
+    });
+
+    for (let value of data) {
+      console.log("Pegando form: ",id);
+      console.log(value.cod_formulario);
+      console.log("id === value.cod_formulario ", id === value.cod_formulario);
+      if(id === value.cod_formulario) {
+        result = value;
+        setForm(result);
+        console.log("Salvou");
+      } else {
+        result = undefined;
+      }
+    }
+    console.log(editForm);
   }
 
   function submitNewForm() {

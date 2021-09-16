@@ -5,6 +5,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
 import { Link } from "react-router-dom";
 
+import { setId } from '../../id';
+
 // Import de CSS.
 import './status.css';
 import '../../misc/animations.css';
@@ -37,7 +39,7 @@ const Status = (props) => {
           <hr className="me-2"></hr>
           <div className="btn-group">
             <div className="btn-div-size">
-              <Link to={{ pathname: `/edit/${props.id}`, params: props.id }} replace><button type="button" className="btn btnSubmitO" id="btnSubmit">Editar</button></Link>
+              <Link to={{ pathname: `/edit/${props.id}`, params: props.id }} replace onClick={setId(props.id)}><button type="button" className="btn btnSubmitO" id="btnSubmit">Editar</button></Link>
             </div>
           </div>
         </div>
@@ -61,7 +63,7 @@ const Status = (props) => {
             </div>
             <hr className="me-2"></hr>
             <div className="btn-group">
-              <Link to={{ pathname: `/adm/edit/${props.id}`, params: props.id }} replace><button type="button" className="btn btnSubmitO" id="btnSubmit">Avaliar</button></Link>
+              <Link to={{ pathname: `/adm/edit/${props.id}`, params: props.id }} replace onClick={setId(props.id)}><button type="button" className="btn btnSubmitO" id="btnSubmit">Avaliar</button></Link>
             </div>
           </div>
           <div className="card-footer ">
@@ -75,7 +77,7 @@ const Status = (props) => {
             </div>
           </div>
         </div>
-        <div id="aprovado" className="modal" tabindex="-1">
+        <div id="aprovado" className="modal" tabIndex="-1">
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
@@ -89,7 +91,7 @@ const Status = (props) => {
           </div>
         </div>
 
-        <div id="reprovado" className="modal" tabindex="-1">
+        <div id="reprovado" className="modal" tabIndex="-1">
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">

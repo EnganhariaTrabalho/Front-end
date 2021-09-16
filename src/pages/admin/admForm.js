@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect, } from 'react';
+import React, { useState, useEffect, } from 'react';
 
 // Import de libs de react.
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -7,22 +7,42 @@ import 'bootstrap/dist/js/bootstrap.min.js';
 // Import de componenets
 import Navbar from '../../components/navbar/navbar';
 
+// Import de API.
+import api from '../../api';
+import { getId } from "../../id";
+
 // Import de CSS.
 import '../form/form.css';
 import '../../misc/animations.css';
 import '../../misc/misc.css';
 
 const EditFormAdm = (props) => {
-  const id = props.location.params;
+  const id = getId();
+  console.log(id);
+  const [editForm, setForm] = useState({});
+  
+  useEffect(() => {
+    findForm();
+  }, []);
 
-  function findForm(id) {
-    // TODO 
-    // GET(id);
-  }
+  async function findForm() {
+    let data;
+    let result;
 
-  function submitNewForm() {
-    // TODO
-    // SUBMIT(id);
+    await api.get(`/formularios/professor`).then(response => {
+      data = response.data;
+    });
+
+    for (let value of data) {
+      if(id === value.cod_formulario) {
+        result = value;
+        setForm(result);
+        console.log("Salvou");
+      } else {
+        result = undefined;
+      }
+    }
+    console.log(editForm);
   }
 
   return (

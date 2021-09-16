@@ -55,7 +55,7 @@ const EditForm = (props) => {
     console.log(form);
     try {
       await api
-        .post(`/formularios`, {
+        .put(`/formularios`, {
             semestre_curso: form.semestre,
             ultima_atualizacao_do_lattes: form.ultima_atualizacao_do_lattes,
             resultado_ultima_avaliacao: form.resultado_ultima_avaliacao,
@@ -80,7 +80,7 @@ const EditForm = (props) => {
         )
         .then((response) => {
           console.log(response.status, response.statusText);
-          alert("Formulário enviado!!!");
+          alert("Formulário atualizado!!!");
         })
 
       props.history.push("/dashboard");
@@ -96,12 +96,6 @@ const EditForm = (props) => {
       [event.target.name]: event.target.value,
     }));
   };
-
-  // Métodos declarados
-  function findCoordenador() {
-    //TODO
-    return undefined;
-  }
 
   useEffect(() => {
     findForm();

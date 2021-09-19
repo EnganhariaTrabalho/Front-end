@@ -63,13 +63,13 @@ const Form = (props) => {
             exame_proeficiencia: form.aprova_proef,
             exame_de_qualificacao: form.exame_quali,
             limite_max_qualificacao: form.limite_quali,
-            tempo_limite_deposito: form.limite_tese,
+            tempo_limete_deposito: form.limite_tese,
             artigos_publicados: form.artigos_aceito,
             artigos_espera: form.artigos_aguardando,
             artigo_preparacao: form.estagio_artigo_submissao,
             estagio_atual_pesquisa: form.estagio_pesquisa,
             congresso: form.participou_congresso_nacional,
-            congresso_exterior: form.participou_congresso_exterior,
+            congresso_extorior: form.participou_congresso_exterior,
             pesquisa_exterior: form.participou_pesquisa_exterior,
             declaracao: form.algo_declarar
           }
@@ -112,6 +112,9 @@ const Form = (props) => {
           <form className="form container" onSubmit={HandleSubmit}>
             <h2 className="noselect">Dados gerais<hr className="my-2"></hr></h2>
             <h4 className="noselect">Ultima atualização do perfil lattes.</h4>
+            <div className="input-group form-floating">
+                <input type="date" className="defaultInput form-control" name="ultimaAtualizacaoDolattes" id="floatingInput" placeholder="Insira uma data válida" aria-label="ultima Atualização Do lattes, ultima Atualização Do lattes" onChange={setInformacoesForm} />
+              </div>
             <div className="form-wrapper">
               <label>Em quantas disciplinas obrigatórias você já obteve aprovação ?</label>
               <div className="input-group form-floating">

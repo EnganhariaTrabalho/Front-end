@@ -1,4 +1,4 @@
-// Métodos de autenticação.
+// Métodos de pegar o ID.
 
 let ID = null;
 

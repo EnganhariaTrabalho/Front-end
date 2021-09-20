@@ -18,50 +18,6 @@ import '../dashboard/dashboard.css';
 import '../../misc/animations.css';
 import '../../misc/misc.css';
 
-const vetor_pessoas = [
-  {
-    idRelatorio: 1,
-    nomeRelatorio: "Relatório A",
-    descricaoRelatorio: "desc A",
-    comentarioCoord: "comentou A",
-    statusDado: "Aprovado",
-    data: "06/06/2021",
-    formulario: {},
-  },
-  {
-    idRelatorio: 2,
-    nomeRelatorio: "Relatório D",
-    descricaoRelatorio: "desc D",
-    comentarioCoord: "comentou D",
-    statusDado: "Reprovado",
-    data: "07/06/2021",
-    formulario: {},
-  },
-  {
-    idRelatorio: 3,
-    nomeRelatorio: "Relatório E",
-    descricaoRelatorio: "desc E",
-    comentarioCoord: "comentou E",
-    statusDado: "Pendente",
-    data: "18/09/2021",
-    formulario: {},
-  },
-  {
-    idRelatorio: 4,
-    nomeRelatorio: "Relatório F",
-    descricaoRelatorio: "desc F",
-    comentarioCoord: "comentou F",
-    statusDado: "Pendente",
-    data: "03/03/2021",
-    formulario: {},
-  },
-]
-
-const vetor_vetor_pessoas = [
-  vetor_pessoas,
-  vetor_pessoas
-]
-
 const AdminDashboard = (props) => {
   const [formData, setFormData] = useState([]);
 
@@ -101,7 +57,6 @@ const AdminDashboard = (props) => {
                   <div className="container">
                   { // Primeiro vetor pega um vetor de relatórios e passa em cada uma row
                       formData === undefined ? "" : formData.map((element, index) => {
-                        console.log(element);
                         return (
                           <div className="row" key={index}>
                             { // Parse do vetor que contém as colunas.

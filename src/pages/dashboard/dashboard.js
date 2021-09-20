@@ -18,50 +18,6 @@ import './dashboard.css';
 import '../../misc/animations.css';
 import '../../misc/misc.css';
 
-const vetor_pessoas = [
-  {
-    idRelatorio: 1,
-    nomeRelatorio: "Relatório A",
-    descricaoRelatorio: "desc A",
-    comentarioCoord: "comentou A",
-    statusDado: "Aprovado",
-    data: "06/06/2021",
-    formulario: {},
-  },
-  {
-    idRelatorio: 2,
-    nomeRelatorio: "Relatório D",
-    descricaoRelatorio: "desc D",
-    comentarioCoord: "comentou D",
-    statusDado: "Reprovado",
-    data: "07/06/2021",
-    formulario: {},
-  },
-  {
-    idRelatorio: 3,
-    nomeRelatorio: "Relatório E",
-    descricaoRelatorio: "desc E",
-    comentarioCoord: "comentou E",
-    statusDado: "Pendente",
-    data: "18/09/2021",
-    formulario: {},
-  },
-  {
-    idRelatorio: 4,
-    nomeRelatorio: "Relatório F",
-    descricaoRelatorio: "desc F",
-    comentarioCoord: "comentou F",
-    statusDado: "Pendente",
-    data: "03/03/2021",
-    formulario: {},
-  },
-]
-
-const vetor_vetor_pessoas = [
-  vetor_pessoas,
-  vetor_pessoas
-]
-
 const Dashboard = (props) => {
   const [formData, setFormData] = useState([]);
 
@@ -89,7 +45,6 @@ const Dashboard = (props) => {
               <div className="list-menu list-group list-group" id="list-tab" role="tablist">
                 <Link to={{ pathname: "/Form/" }} className="list-menu-item list-group-item list-group-item-action noselect" role="tab" aria-controls="enviar formulário">Enviar Formulário</Link>
                 <button className="list-menu-item list-group-item list-group-item-action noselect" data-bs-toggle="list" href="#list-editar-form" role="tab" aria-controls="list-profile">Editar Formulário</button>
-                <button className="list-menu-item list-group-item list-group-item-action noselect" data-bs-toggle="list" href="#list-status-form" role="tab" aria-controls="list-messages">Status Formulário</button>
                 <button className="list-menu-item list-group-item list-group-item-action noselect" data-bs-toggle="list" href="#list-perfil" role="tab" aria-controls="list-settings">Perfil</button>
               </div>
             </div>
@@ -102,6 +57,7 @@ const Dashboard = (props) => {
                 <div className="tab-pane fade" id="list-editar-form" role="tabpanel" aria-labelledby="list-profile-list">
                   <div className="container">
                     { // Primeiro vetor pega um vetor de relatórios e passa em cada uma row
+                      
                       formData === undefined ? "" : formData.map((element, index) => {
                         return (
                           <div className="row" key={index}>
@@ -112,35 +68,6 @@ const Dashboard = (props) => {
                                 nomeRelatorio={"Relatório " + element.cod_formulario}
                                 descricaoRelatorio={ element.declaracao}
                                 comentarioCoord={ element.comentario_orientador}
-                                statusDado={ element.statusDado}
-                                relStatus={ element.statusDado}
-                                data={ element.data}
-                                form={ element.formulario}
-                                typeEdit={true}
-                              />
-                            </div>
-                            }
-                          </div>
-                        );
-                      })
-                    }
-                  </div>
-                </div>
-                <div className="tab-pane fade" id="list-status-form" role="tabpanel" aria-labelledby="list-messages-list">
-                  <div className="container">
-                    { // Primeiro vetor pega um vetor de relatórios e passa em cada uma row
-                      formData === undefined ? "" : formData.map((element, index) => {
-                        return (
-                          <div className="row" key={index}>
-                            { // Parse do vetor que contém as colunas.
-                              <div className="col" key={index}>
-                              <Status
-                                id={ element.cod_formulario}
-                                nomeRelatorio={"Relatório " + element.cod_formulario}
-                                descricaoRelatorio={ element.declaracao}
-                                comentarioCoord={ element.comentario_orientador}
-                                statusDado={ element.statusDado}
-                                relStatus={ element.statusDado}
                                 data={ element.data}
                                 form={ element.formulario}
                                 typeEdit={true}

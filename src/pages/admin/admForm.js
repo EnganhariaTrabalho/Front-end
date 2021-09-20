@@ -18,8 +18,8 @@ import '../../misc/misc.css';
 
 const EditFormAdm = (props) => {
   const id = getId();
-  console.log(id);
   const [editForm, setForm] = useState({});
+  const [informacoes, setInformacoes] = useState({}); 
   
   useEffect(() => {
     findForm();
@@ -31,19 +31,43 @@ const EditFormAdm = (props) => {
 
     await api.get(`/formularios/professor`).then(response => {
       data = response.data;
+      console.log(response);
     });
-
+    
     for (let value of data) {
       if(id === value.cod_formulario) {
+        console.log("Entrou");
         result = value;
         setForm(result);
-        console.log("Salvou");
+        console.log(result);
       } else {
         result = undefined;
       }
     }
-    console.log(editForm);
+    console.log(editForm.cod_formulario);
   }
+
+  async function avalForm(event) {
+    event.preventDefault();
+    try {
+      console.log(id);
+      console.log(informacoes);
+      await api.put('/formularios/professor', {cod_formulario: id, comentario_orientador: informacoes.comentario_orientador}).then(response => {
+        console.log(response.status, response.statusText);
+        alert("Formulário comentádo com sucesso!!!");
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  
+  const setInformacoesForm = (event) => {
+    event.persist();
+    setInformacoes(informacoes => ({
+      ...informacoes,
+      [event.target.name]: event.target.value,
+    }));
+  };
 
   return (
     <>
@@ -51,12 +75,12 @@ const EditFormAdm = (props) => {
         <Navbar isOnFormsPage={true} isCoord={true}/>
         <div id="container">
           <h1 className="text-center noselect">Formulário {id}</h1>
-          <form className="form container">
+          <form className="form container" onSubmit={avalForm}>
             <h2 className="noselect">Dados gerais<hr className="my-2"></hr></h2>
-            <h3>Nome Aluno</h3>
-            <h3>Número USP</h3>
-            <h3>Email Aluno<hr className="my-2"></hr></h3>
-            <h3>Nome do coordenador</h3>
+            <h3>Nome Aluno: </h3>
+            <h3>Número USP: {editForm.numero_usp_aluno}</h3>
+            <h3>Email Aluno: <hr className="my-2"></hr></h3>
+            <h3>Nome do coordenador: </h3>
             <div className="content-checkbox noselect">
               <label className="noselect">Qual o tipo do seu curso ?</label>
               <ul className="list-group list-group-check-box">
@@ -474,12 +498,12 @@ const EditFormAdm = (props) => {
 
             <div className="form-wrapper">
               <label className="noselect">Comentário do avaliador: </label>
-              <textarea type="name" className="defaultTextArea form-control" id="floatingInput" aria-label="Você tem algo a mais a declarar para a CCP - PPgSI?" />
+              <textarea type="name" className="defaultTextArea form-control" id="floatingInput" aria-label="Você tem algo a mais a declarar para a CCP - PPgSI?" name="comentario_orientador" onChange={setInformacoesForm}/>
             </div>
 
             <div className="btn-group">
               <div className="btn-div-size">
-                <button type="button" className="btn btnSubmitO" id="btnSubmit">Enviar</button>
+                <button type="submit" className="btn btnSubmitO" id="btnSubmit">Enviar</button>
               </div>
             </div>
           </form>

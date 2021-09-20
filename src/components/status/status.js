@@ -16,67 +16,86 @@ import '../../misc/misc.css';
 const Status = (props) => {
   const [id, setIdForm] = useState(props.id);
   const [status, setStatus] = useState();
+  const [data, setData] = useState();
+  const [avaliacao_professor, setAvalProf] = useState();
 
+  // User e Adm.
   useEffect(() => {
     getFormStatus();
   }, []);
 
-  useEffect(() => {
-    findForm();
-  }, []);
-
   async function findForm() {
-    let data;
+    let dataForm;
     let result;
 
-    await api.get(`/formularios/aluno`).then(response => {
-      data = response.data;
-    });
+    if ((props.typeEdit !== false && props.typeEdit !== undefined) && (props.coord === undefined || props.coord === undefined)) {
+      await api.get(`/formularios/aluno`).then(response => {
+        dataForm = response.data;
+      });
+    } else {
+      dataForm = undefined;
+    }
 
-    for (let value of data) {
-      console.log("Pegando form: ",id);
-      console.log(value.cod_formulario);
-      console.log("id === value.cod_formulario ", id === value.cod_formulario);
-      if(id === value.cod_formulario) {
+    for (let value of dataForm) {
+      if (id === value.cod_formulario) {
         result = value;
         setIdForm(result);
-        console.log("Salvou");
       } else {
         result = undefined;
       }
     }
+    setIdForm(id.cod_formulario);
     console.log(id);
-  }
-
-  function handleStatusApro(event) {
-    setStatus(true);
-    setUserFormStatus(event);
-  }
-
-  function handleStatusRepro(event) {
-    setStatus(false);
-    setUserFormStatus(event);
   }
 
   async function getFormStatus() {
     let result;
-    await api.get(`/status/`).then((response) => {
-      result = response.data;
-    });
-    setStatus(result);
-    return result;
+    if ((props.typeEdit !== false && props.typeEdit !== undefined) && (props.coord === undefined || props.coord === undefined)) {
+      await api.get(`/status`).then(response => {
+
+        result = response.data;
+        if (result[0].status === "Enviado para o professor") {
+          setStatus("Pendente");
+        } else if (result[0].status === "aprovado") {
+          setStatus("Aprovado");
+        } else if (result[0].status === "reprovado") {
+          setStatus("Reprovado");
+        } else {
+          setStatus("Pendente");
+        }
+
+        let d = result[0].data;
+        setData(d);
+      });
+    } else {
+      return;
+    }
+
   }
 
   async function setUserFormStatus(event) {
     event.preventDefault();
     try {
-      await api.put('/status/', String(status), id).then(response => {
-        console.log(response);
+      await api.put('/status/professor', { cod_formulario: id, status:  avaliacao_professor, avaliacao_professor: avaliacao_professor }).then(response => {
+        console.log(response.status, response.statusText);
       });
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
   }
+  // User e Adm.
+
+  // Handle de aprovar
+  function handleAprovar(event) {
+    setAvalProf("aprovado");
+    setUserFormStatus(event);
+  }
+
+  function handleReprovar(event) {
+    setAvalProf("reprovado");
+    setUserFormStatus(event);
+  }
+  
 
   // Mostra para editar o form.
   if (props.typeEdit !== false && props.typeEdit !== undefined) {
@@ -85,17 +104,23 @@ const Status = (props) => {
         <div className="card-header"><h4 className="text-center">{props.nomeRelatorio}</h4></div>
         <div className="card-body">
           <div className="card-text">
-            <p className="status-info">{props.descricaoRelatorio}</p>
+            <p className="status-info">Descrição: {props.descricaoRelatorio}</p>
+          </div>
+          <div className="card-text">
+            <p className="status-comentário">Comentário do avaliador: {props.comentarioCoord}</p>
           </div>
           <hr className="me-2"></hr>
           <div className="btn-group">
             <div className="btn-div-size">
-              <Link to={{ pathname: `/edit/${props.id}`, params: props.id }} replace onClick={setId(props.id)}><button type="button" className="btn btnSubmitO" id="btnSubmit">Editar</button></Link>
+              <Link to={{ pathname: `/edit/${props.id}`, params: props.id }} replace onClick={setId(props.id)}><button type="button" className="btn btnSubmitO" id="btnSubmit" onClick={setId(props.id)}>Editar</button></Link>
             </div>
+          </div>
+          <div className={"card-footer " + status}>
+            <h4 className="text-center">{status}</h4>
           </div>
         </div>
         <div className="card-footer">
-          <p className="text-center">Data limite para editar: {props.data}</p>
+          <p className="text-center">Data limite para editar: {data}</p>
         </div>
       </div>
     );
@@ -106,24 +131,24 @@ const Status = (props) => {
           <div className="card-header"><h4 className="text-center">{props.nomeRelatorio}</h4></div>
           <div className="card-body">
             <div className="card-text">
-              <p className="status-info">{props.descricaoRelatorio}</p>
+              <p className="status-info">Descrição: {props.descricaoRelatorio}</p>
             </div>
             <hr className="me-2"></hr>
             <div className="card-text">
-              <p className="status-comentário">{props.comentarioCoord}</p>
+              <p className="status-comentário">Comentário do avaliador: {props.comentarioCoord}</p>
             </div>
             <hr className="me-2"></hr>
             <div className="btn-group">
-              <Link to={{ pathname: `/adm/edit/${props.id}`, params: props.id }} replace onClick={setId(props.id)}><button type="button" className="btn btnSubmitO" id="btnSubmit">Avaliar</button></Link>
+              <Link to={{ pathname: `/adm/edit/${props.id}`, params: props.id }} replace onClick={setId(props.id)}><button type="button" className="btn btnSubmitO" id="btnSubmit" onClick={setId(props.id)}>Avaliar</button></Link>
             </div>
           </div>
           <div className="card-footer ">
             <div className="btn-group">
               <div className="btn-div-size">
-                <button type="button" className="btn btnSubmitApprove" id="btnSubmit" data-bs-toggle="modal" data-bs-target="#aprovado" onClick={handleStatusApro}>Aprovar</button>
+                <button type="button" className="btn btnSubmitApprove" id="btnSubmit" data-bs-toggle="modal" data-bs-target="#aprovado" onClick={handleAprovar}>Aprovar</button>
               </div>
               <div className="btn-div-size">
-                <button type="button" className="btn btnSubmitClose" id="btnSubmit" data-bs-toggle="modal" data-bs-target="#reprovado" onClick={handleStatusRepro}>Reprovar</button>
+                <button type="button" className="btn btnSubmitClose" id="btnSubmit" data-bs-toggle="modal" data-bs-target="#reprovado" onClick={handleReprovar}>Reprovar</button>
               </div>
             </div>
           </div>
@@ -156,25 +181,6 @@ const Status = (props) => {
           </div>
         </div>
       </>
-    );
-  } else {
-    // Mostra apenas o status do relatório
-    return (
-      <div className="card noselect">
-        <div className="card-header"><h4 className="text-center">{props.nomeRelatorio}</h4></div>
-        <div className="card-body">
-          <div className="card-text">
-            <p className="status-info">{props.descricaoRelatorio}</p>
-          </div>
-          <hr className="me-2"></hr>
-          <div className="card-text">
-            <p className="status-comentário">{props.comentarioCoord}</p>
-          </div>
-        </div>
-        <div className={"card-footer " + props.relStatus}>
-          <h4 className="text-center">{props.statusDado}</h4>
-        </div>
-      </div>
     );
   }
 }
